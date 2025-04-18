@@ -1,11 +1,16 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from 'src/users/schemas/users.schema';
 import { LoginDTO } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { generate } from 'rxjs';
+
+export interface AuthenticatedUser {
+  user: User;
+  access_token: string;
+}
 
 
 @Injectable()
@@ -21,7 +26,7 @@ export class AuthService {
    */
   
 
-  async signup(signUpDto: SignUpDTO): Promise<User> {
+  async registerUser(signUpDto: SignUpDTO): Promise<User> {
     const createdUser = new this.userModel(signUpDto);
     return createdUser.save();
   }
@@ -29,12 +34,12 @@ export class AuthService {
 
   /**
    * Authenticates a user based on the provided login credentials.
-   * @param loginDto - The data transfer object containing user login information.
+  async validateUser(loginDto: LoginDTO): Promise<AuthenticatedUser | null> {
    * @returns The authenticated user or null if authentication fails.
    * @throws UnauthorizedException if the user is not found or credentials are invalid.
    */
 
-  async login(loginDto: LoginDTO): Promise<User | null> {
+  async validateUser(loginDto: LoginDTO): Promise<AuthenticatedUser | null> {
     const user = await this.userModel.findOne({ email: loginDto.email }).exec();
 
     if (!user) {
@@ -53,8 +58,10 @@ export class AuthService {
     
   }
 
-async generateToken(userId) {    
-  const access_token = await this.jwtService.sign({ userId }, { expiresIn: '60s' });
+async generateToken(userId: Types.ObjectId) {    
+  const access_token = this.jwtService.signAsync({ userId }, { 
+    secret: process.env.JWT_SECRET,
+    expiresIn: '60s' });
   return access_token   
 } 
 

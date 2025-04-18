@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {  SignUpDTO } from './dto/sign-up.dto';
 import { UsersService } from 'src/users/users.service';
 import { LoginDTO } from './dto/login.dto';
 import { AuthGuard } from './guards/auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { Console } from 'console';
+import { JwtAuthGuard } from './guards/jwt.guard';
 
 
 
@@ -16,23 +19,32 @@ export class AuthController {
   ) {}
 
 
-  @HttpCode(HttpStatus.CREATED)
   @Post('signup')
+  @UseGuards(LocalAuthGuard)
   signup(@Body() signUpDto: SignUpDTO) {
     return this.usersService.create(signUpDto);
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() loginDto: LoginDTO) {
-    return this.authService.login(loginDto);
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
+  @UseGuards(LocalAuthGuard)
+  async login(@Request() req) {
     return req.user;
   }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  getProfile(@Request() req) {
+    console.log(req.user);
+    return req.user;
+  }
+
+
+  @UseGuards(LocalAuthGuard)
+  @Post('logout')
+  async logout(@Request() req) {
+    return req.logout();
+  }
+  
 
 
 

@@ -1,14 +1,13 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Date, HydratedDocument } from 'mongoose';
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 
-export type UserDocument = HydratedDocument<User> & {
-  comparePassword: (plainPassword: string) => Promise<boolean>;
-};
+export type UserDocument = HydratedDocument<User> 
 
 @Schema({ timestamps: true })
 export class User {
+  
   @Prop({ unique: true })
   username: string;
 
