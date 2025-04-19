@@ -1,24 +1,18 @@
-
-POST http://localhost:3000/auth/signup HTTP/1.1
-Content-Type: application/json
-
-{
-    "username": "testuser",
-    "email": "testemail@gmail.com",
-    "password": "testpassword"
-}
-
-###
+// Created by: [Your Name]
+// Created on: [Date]
+// Description: This file contains the HTTP requests for the authentication module.
+// It includes the login and get user profile requests.
 
 
 # login
 # @name loginAPI
+# @description This is the login API
 POST http://localhost:3000/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "email": "testemail@gmail.com",
-    "password": "testpassword"
+    "email": "kevin@gmail.com",
+    "password": "pa22word"
 }
 
 ###
@@ -30,4 +24,7 @@ Content-Type: application/json
 GET http://localhost:3000/auth/profile HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
+
+
+###
 

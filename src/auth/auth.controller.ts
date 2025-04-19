@@ -20,9 +20,9 @@ export class AuthController {
 
 
   @Post('signup')
-  @UseGuards(LocalAuthGuard)
-  signup(@Body() signUpDto: SignUpDTO) {
-    return this.usersService.create(signUpDto);
+  // @UseGuards(LocalAuthGuard)
+  async signup(@Body() signUpDto: SignUpDTO) {
+    return this.authService.registerUser(signUpDto);
   }
 
   @Post('login')
@@ -33,17 +33,16 @@ export class AuthController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  getProfile(@Request() req) {
-    console.log(req.user);
+  async getProfile(@Request() req) {
     return req.user;
   }
 
 
-  @UseGuards(LocalAuthGuard)
-  @Post('logout')
-  async logout(@Request() req) {
-    return req.logout();
-  }
+  // @UseGuards(LocalAuthGuard)
+  // @Post('logout')
+  // async logout(@Request() req) {
+  //   return req.logout();
+  // }
   
 
 

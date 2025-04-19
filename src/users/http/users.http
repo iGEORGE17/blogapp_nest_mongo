@@ -1,25 +1,27 @@
 
 
-POST http://localhost:3000/auth/signup HTTP/1.1
+
+POST http://localhost:3000/users/create HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testuser",
-    "email": "testemail@gmail.com",
-    "password": "testpassword"
+    "username": "paul",
+    "email": "paul@gmail.com",
+    "password": "pa22word"
 }
+###
 
+
+// This file contains the HTTP request and response for the users service
+// # @name getUsers
+// # @description This is the get users API
+// GET http://localhost:3000/users HTTP/1.1
+GET http://localhost:3000/users HTTP/1.1
+Content-Type: application/json
 ###
 
 
 
-POST http://localhost:3000/auth/login HTTP/1.1
+GET http://localhost:3000/users/67f91f21d854d27d5584583e HTTP/1.1
 Content-Type: application/json
-
-{
-    
-    "email": "testemail@gmail.com",
-    "password": "testpassword"
-}
-
 ###
