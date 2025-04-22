@@ -6,10 +6,12 @@ import { User } from 'src/users/schemas/users.schema';
 import { LoginDTO } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { generate } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 
 export interface AuthenticatedUser {
   user: User;
   access_token: string;
+  refresh_token: string;
 }
 
 
@@ -52,9 +54,14 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    const refresh_token = uuid(); // Generate a new refresh token
+    user.refreshToken = refresh_token; // Add a `refreshToken` field to the User schema
+    await user.save();
+
     return {
       user,
       access_token: await this.generateToken(user._id),
+      refresh_token
     }
     
   }
@@ -62,9 +69,21 @@ export class AuthService {
 async generateToken(userId: Types.ObjectId) {    
   const access_token = this.jwtService.signAsync({ userId }, { 
     secret: process.env.JWT_SECRET,
-    expiresIn: '60s' });
+    expiresIn: '1h' }); 
+
   return access_token   
 } 
+
+async refreshToken(userId: Types.ObjectId, refreshToken: string): Promise<string> {
+  const user = await this.userModel.findById(userId).exec();
+
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new UnauthorizedException('Invalid refresh token');
+  }
+
+  // Generate a new access token
+  return this.generateToken(user._id);
+}
 
 
 }

@@ -20,6 +20,9 @@ export class User {
   @Prop({ default: "user", enum: ["user", "admin"] })
   role: string;
 
+  @Prop()
+  refreshToken: string;  
+
   async comparePassword(candidatePassword: string): Promise<boolean> {
     return bcrypt.compare(candidatePassword, this.password);
   }  
